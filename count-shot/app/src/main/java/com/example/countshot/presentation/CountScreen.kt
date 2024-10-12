@@ -12,6 +12,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -23,8 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import androidx.wear.compose.material.dialog.Alert
 
 @Composable
 fun CountScreen(
@@ -35,7 +40,7 @@ fun CountScreen(
     CountContent(
         count = uiState.count,
         onCountUpClicked = { countViewModel.incrementCount() },
-        onResetLongPressed = { countViewModel.resetCount() }
+        onResetClicked = { countViewModel.resetCount() }
     )
 }
 
@@ -43,8 +48,10 @@ fun CountScreen(
 private fun CountContent(
     count: Int,
     onCountUpClicked: () -> Unit,
-    onResetLongPressed: () -> Unit
+    onResetClicked: () -> Unit
 ) {
+    var isResetDialogShown by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,7 +78,7 @@ private fun CountContent(
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onLongPress = {
-                            onResetLongPressed()
+                            isResetDialogShown = true
                         }
                     )
                 },
@@ -85,6 +92,46 @@ private fun CountContent(
             )
         }
     }
+
+    if (isResetDialogShown) {
+        ResetAlertDialog(
+            onDismiss = { isResetDialogShown = false },
+            onConfirm = {
+                onResetClicked()
+                isResetDialogShown = false
+            }
+        )
+    }
+}
+
+@Composable
+private fun ResetAlertDialog(
+    onDismiss: () -> Unit = {},
+    onConfirm: () -> Unit = {}
+) {
+    Alert(
+        title = { Text(text = "Reset count?") },
+        negativeButton = {
+            Button(
+                colors = ButtonDefaults.secondaryButtonColors(),
+                onClick = {
+                    onDismiss()
+                }
+            ) {
+                Text("No")
+            }
+        },
+        positiveButton = {
+            Button(
+                onClick = {
+                    onConfirm()
+                }
+            ) {
+                Text("Yes")
+            }
+        }
+    ) {
+    }
 }
 
 @Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
@@ -93,6 +140,12 @@ private fun PreviewCountScreen() {
     CountContent(
         count = 5,
         onCountUpClicked = {},
-        onResetLongPressed = {}
+        onResetClicked = {}
     )
+}
+
+@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
+@Composable
+private fun PreviewResetAlertDialog() {
+    ResetAlertDialog()
 }
