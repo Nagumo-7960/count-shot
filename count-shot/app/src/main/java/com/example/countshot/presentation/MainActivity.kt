@@ -9,22 +9,24 @@ package com.example.countshot.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import com.example.countshot.R
 import com.example.countshot.presentation.theme.CountShotTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,13 +38,20 @@ class MainActivity : ComponentActivity() {
         setTheme(android.R.style.Theme_DeviceDefault)
 
         setContent {
-            WearApp("Android")
+            var count by remember { mutableStateOf(0) }
+            WearApp(
+                count = count,
+                onClicked = { count++ }
+            )
         }
     }
 }
 
 @Composable
-fun WearApp(greetingName: String) {
+fun WearApp(
+    count: Int,
+    onClicked: () -> Unit
+) {
     CountShotTheme {
         Box(
             modifier = Modifier
@@ -50,24 +59,33 @@ fun WearApp(greetingName: String) {
                 .background(MaterialTheme.colors.background),
             contentAlignment = Alignment.Center
         ) {
-            TimeText()
-            Greeting(greetingName = greetingName)
+            CountSection(
+                count = count,
+                onClicked = onClicked
+            )
         }
     }
 }
 
 @Composable
-fun Greeting(greetingName: String) {
+fun CountSection(
+    count: Int,
+    onClicked: () -> Unit
+) {
     Text(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.clickable { onClicked() },
+        text = count.toString(),
+        fontSize = 38.sp,
         textAlign = TextAlign.Center,
         color = MaterialTheme.colors.primary,
-        text = stringResource(R.string.hello_world, greetingName)
     )
 }
 
 @Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
 @Composable
-fun DefaultPreview() {
-    WearApp("Preview Android")
+fun PreviewWearOS() {
+    WearApp(
+        count = 5,
+        onClicked = {}
+    )
 }
