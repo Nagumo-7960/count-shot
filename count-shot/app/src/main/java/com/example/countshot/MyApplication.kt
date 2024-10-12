@@ -1,4 +1,4 @@
-package com.example.countshot.presentation
+package com.example.countshot
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

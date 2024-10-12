@@ -66,10 +66,13 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
 
     kapt(libs.hilt.android.compiler)
+    kapt(libs.room.compiler)
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
 
+    implementation(libs.room.runtime)
+    implementation(libs.room)
 }
 
 kapt {
