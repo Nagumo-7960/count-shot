@@ -2,6 +2,7 @@ package com.example.countshot.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -33,7 +35,7 @@ fun CountScreen(
     CountContent(
         count = uiState.count,
         onCountUpClicked = { countViewModel.incrementCount() },
-        onResetClicked = { countViewModel.resetCount() }
+        onResetLongPressed = { countViewModel.resetCount() }
     )
 }
 
@@ -41,7 +43,7 @@ fun CountScreen(
 private fun CountContent(
     count: Int,
     onCountUpClicked: () -> Unit,
-    onResetClicked: () -> Unit
+    onResetLongPressed: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -61,11 +63,19 @@ private fun CountContent(
         Spacer(modifier = Modifier.size(16.dp))
 
         Button(
-            modifier = Modifier.size(
-                width = 56.dp,
-                height = 28.dp
-            ),
-            onClick = { onResetClicked() },
+            modifier = Modifier
+                .size(
+                    width = 56.dp,
+                    height = 28.dp
+                )
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = {
+                            onResetLongPressed()
+                        }
+                    )
+                },
+            onClick = {/* クリックの処理はなし */ },
             shape = RoundedCornerShape(10),
         ) {
             Text(
@@ -83,6 +93,6 @@ private fun PreviewCountScreen() {
     CountContent(
         count = 5,
         onCountUpClicked = {},
-        onResetClicked = {}
+        onResetLongPressed = {}
     )
 }
