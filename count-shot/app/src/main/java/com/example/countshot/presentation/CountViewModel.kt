@@ -36,6 +36,15 @@ class CountViewModel @Inject constructor(
             countDao.insertCount(CountEntity(id = 0, count = currentCount))
         }
     }
+
+    // カウントをリセットしてデータベースに保存
+    fun resetCount() {
+        _countUiState.value = CountUiState(0)
+
+        viewModelScope.launch {
+            countDao.insertCount(CountEntity(id = 0, count = 0))
+        }
+    }
 }
 
 data class CountUiState(

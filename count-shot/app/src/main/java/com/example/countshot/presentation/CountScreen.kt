@@ -32,14 +32,16 @@ fun CountScreen(
     val uiState: CountUiState by countViewModel.countUiState.collectAsState()
     CountContent(
         count = uiState.count,
-        onClicked = { countViewModel.incrementCount() }
+        onCountUpClicked = { countViewModel.incrementCount() },
+        onResetClicked = { countViewModel.resetCount() }
     )
 }
 
 @Composable
 private fun CountContent(
     count: Int,
-    onClicked: () -> Unit
+    onCountUpClicked: () -> Unit,
+    onResetClicked: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -49,7 +51,7 @@ private fun CountContent(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            modifier = Modifier.clickable { onClicked() },
+            modifier = Modifier.clickable { onCountUpClicked() },
             text = count.toString(),
             fontSize = 48.sp,
             textAlign = TextAlign.Center,
@@ -63,7 +65,7 @@ private fun CountContent(
                 width = 56.dp,
                 height = 28.dp
             ),
-            onClick = { /*TODO*/ },
+            onClick = { onResetClicked() },
             shape = RoundedCornerShape(10),
         ) {
             Text(
@@ -80,6 +82,7 @@ private fun CountContent(
 private fun PreviewCountScreen() {
     CountContent(
         count = 5,
-        onClicked = {}
+        onCountUpClicked = {},
+        onResetClicked = {}
     )
 }
